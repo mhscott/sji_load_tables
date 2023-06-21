@@ -120,7 +120,7 @@ class JoistLoadTableEntry:
     def live_load(self,L_over=360,units='plf'):
 
         # Convert to specified deflection limit
-        live_load_plf = L_over/360*self.live_load_plf
+        live_load_plf = (360/L_over)*self.live_load_plf
         
         # Check against total ASD load
         total_load_ASD_plf = self.total_load('ASD',units='plf')
