@@ -237,7 +237,7 @@ def get_joist_data(designation,span=None,span_units='ft'):
 
 
 def lightest_joist(span,required_total_load=None,required_deflection_limit_load=None,
-                   min_depth=None,max_depth=None,series=None,minimize_erection_bridging=False,
+                   min_depth=None,max_depth=None,series=None,no_erection_bridging=False,
                    design_basis='ASD',L_over=360,
                    span_units='ft',depth_units='in',load_units='plf'):
     '''
@@ -321,8 +321,9 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
                 continue
 
         # Check erection bridging
-        if joist.erection_bridging_color_code == 'Red':
-            continue
+        if no_erection_bridging:
+            if joist.erection_bridging_color_code is not None:
+                continue
             
         return joist
     
