@@ -18,7 +18,7 @@ class JoistLoadTableEntry:
     approx_wt_plf: float
     span_ft: float
     total_load_ASD_plf: float
-    live_load_plf: float
+    deflection_limit_load_plf: float
     erection_bridging_color_code: str
     
     # Properties for rounding results
@@ -37,7 +37,7 @@ class JoistLoadTableEntry:
     def __str__(self):
         if self.span_ft is not None:
             s =   f'{self.designation} joist, span_ft={self.span_ft}, approx_wt_plf={self.approx_wt_plf} \n' 
-            s +=  f'  total_load_ASD_plf={self.total_load_ASD_plf}, live_load_plf={self.live_load_plf} \n'
+            s +=  f'  total_load_ASD_plf={self.total_load_ASD_plf}, deflection_limit_load_plf={self.deflection_limit_load_plf} \n'
             s +=  f'  erection_bridging_color_code={self.erection_bridging_color_code}'
         else:
             s = f'{self.designation} joist, approx_wt_plf={self.approx_wt_plf}'
@@ -117,35 +117,35 @@ class JoistLoadTableEntry:
         else:
             raise ValueError(f'Unit conversion for total_load from plf to {units} is not implemented')        
     
-    def live_load(self,L_over=360,units='plf'):
+    def deflection_limit_load(self,L_over=360,units='plf'):
 
         # Convert to specified deflection limit
-        live_load_plf = (360/L_over)*self.live_load_plf
+        deflection_limit_load_plf = (360/L_over)*self.deflection_limit_load_plf
         
         # Check against total ASD load
         total_load_ASD_plf = self.total_load('ASD',units='plf')
-        if live_load_plf > total_load_ASD_plf:
-            live_load_plf = total_load_ASD_plf
+        if deflection_limit_load_plf > total_load_ASD_plf:
+            deflection_limit_load_plf = total_load_ASD_plf
 
         # Convert to specified units
         if units in ['plf','lbs/ft']:
             if self.round_results:
-                return round(live_load_plf,self.ndigits_load_plf)
+                return round(deflection_limit_load_plf,self.ndigits_load_plf)
             else:
-                return live_load_plf
+                return deflection_limit_load_plf
         elif units == 'kN/m':
-            live_load_kNm = live_load_plf*plf_to_kNm
+            deflection_limit_load_kNm = deflection_limit_load_plf*plf_to_kNm
             if self.round_results:
-                return round(live_load_kNm,self.ndigits_load_kNm)
+                return round(deflection_limit_load_kNm,self.ndigits_load_kNm)
             else:
-                return live_load_kNm
+                return deflection_limit_load_kNm
         else:
-            raise ValueError(f'Unit conversion for live_load from plf to {units} is not implemented') 
+            raise ValueError(f'Unit conversion for deflection_limit_load from plf to {units} is not implemented') 
 
     def approx_moment_of_inertia(self,shear_deformation_factor=1.15,units='in.4'):
         
         # Compute approximate moment of inertia
-        W = self.live_load(L_over=360,units='plf')
+        W = self.deflection_limit_load(L_over=360,units='plf')
         L = self.span(units='ft') - 0.33
         Ij_in4 = 26.767e-6*W*L**3
         Ieff_in4 = Ij_in4/shear_deformation_factor
@@ -177,7 +177,7 @@ def get_joist_data(designation,span=None,span_units='ft'):
     
     if span is None:
         total_load_ASD = None
-        live_load = None
+        deflection_limit_load = None
         erection_bridging_color_code = None
     
     else:
@@ -196,9 +196,9 @@ def get_joist_data(designation,span=None,span_units='ft'):
         if span_ft > max_span_ft:
             raise ValueError(f'Requested span ({span_ft} ft) exceeds maximum span of {max_span_ft} ft for a {designation} joist')
     
-        # Linear interpolate load data for total and live load
+        # Linear interpolate load data for total and deflection load
         total_load_ASD_plf = interp(span_ft,joist_dict['span_ft_list'],joist_dict['total_load_ASD_plf_list'])
-        live_load_plf = interp(span_ft,joist_dict['span_ft_list'],joist_dict['live_load_plf_list'])
+        deflection_limit_load_plf = interp(span_ft,joist_dict['span_ft_list'],joist_dict['deflection_limit_load_plf_list'])
 
         # Erection Bridging Color Code
         if joist_dict['series'] == 'K':
@@ -229,14 +229,14 @@ def get_joist_data(designation,span=None,span_units='ft'):
         approx_wt_plf=joist_dict['approx_wt_plf'],
         span_ft=span_ft,
         total_load_ASD_plf=total_load_ASD_plf,
-        live_load_plf=live_load_plf,
+        deflection_limit_load_plf=deflection_limit_load_plf,
         erection_bridging_color_code=erection_bridging_color_code,
         )
     
     return joist
 
 
-def lightest_joist(span,required_total_load=None,required_live_load=None,
+def lightest_joist(span,required_total_load=None,required_deflection_limit_load=None,
                    min_depth=None,max_depth=None,series=None,minimize_erection_bridging=False,
                    design_basis='ASD',L_over=360,
                    span_units='ft',depth_units='in',load_units='plf'):
@@ -261,11 +261,11 @@ def lightest_joist(span,required_total_load=None,required_live_load=None,
         else:
             raise ValueError(f'Unit conversion for load from {load_units} to plf is not implemented')    
 
-    if required_live_load is not None:
+    if required_deflection_limit_load is not None:
         if load_units in ['plf','lb/ft']:
-            required_live_load_plf = required_live_load
+            required_deflection_limit_load_plf = required_deflection_limit_load
         elif load_units == 'kNm':
-            required_live_load_plf = required_live_load*kNm_to_plf
+            required_deflection_limit_load_plf = required_deflection_limit_load*kNm_to_plf
         else:
             raise ValueError(f'Unit conversion for load from {load_units} to plf is not implemented')    
 
@@ -315,9 +315,9 @@ def lightest_joist(span,required_total_load=None,required_live_load=None,
             if required_total_load_plf > joist.total_load(design_basis,units='plf'):
                 continue
         
-        # Check required live load
-        if required_live_load is not None:
-            if required_live_load_plf > joist.live_load(L_over=L_over,units='plf'):
+        # Check required deflection limit load
+        if required_deflection_limit_load is not None:
+            if required_deflection_limit_load_plf > joist.deflection_limit_load(L_over=L_over,units='plf'):
                 continue
 
         # Check erection bridging

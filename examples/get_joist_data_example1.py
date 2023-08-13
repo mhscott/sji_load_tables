@@ -15,8 +15,8 @@ print(total_load)
 total_load = joist.total_load('LRFD',units='kN/m')
 print(total_load)
 
-live_load = joist.live_load()
-print(live_load)
+deflection_limit_load = joist.deflection_limit_load()
+print(deflection_limit_load)
 
-live_load = joist.live_load(units='kN/m')
-print(live_load)
+deflection_limit_load = joist.deflection_limit_load(units='kN/m')
+print(deflection_limit_load)
