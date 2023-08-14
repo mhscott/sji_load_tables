@@ -15,8 +15,6 @@ package does so at their own risk and assumes all liability arising from such us
 Please report any bugs, errors, feature requests to [Prof. Denavit](https://cee.utk.edu/people/mark-denavit/) 
 or [create an issue](https://github.com/denavit/sji_load_tables/issues/new/choose).
 
-<br>
-
 ## Install
 
 ```sh
