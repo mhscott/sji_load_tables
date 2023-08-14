@@ -5,6 +5,8 @@
 
 Developed and maintained by **Mark Denavit's** research group, authorized by the Steel Joist Institute.
 
+The load table data is based on the [44th Edition Catalog](https://steeljoist.org/product/44th-edition-standard-specifications-load-tables-and-weight-tables-for-steel-joists-and-joist-girders-2-2/).
+
 This Python package is for general information only. It is intended to be an accurate, reliable, and 
 useful tool, however, it should not be used or relied upon for any specific project without competent 
 professional assessment of its accuracy, suitability, and applicability. Any person using this Python 
