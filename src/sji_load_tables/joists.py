@@ -45,9 +45,15 @@ class JoistLoadTableEntry:
     
     @property
     def total_load_LRFD_plf(self):
+        '''LRFD total load equal to 1.5 times ASD total load'''
         return 1.5*self.total_load_ASD
 
     def depth(self,units='in'):
+        '''Joist depth
+        
+        Arguments:
+            units: output units, e.g., 'in' and 'mm' (default = 'in')
+        '''    
         if units == 'in':
             if self.round_results:
                 return round(self.depth_in,self.ndigits_depth_in)
@@ -63,6 +69,13 @@ class JoistLoadTableEntry:
             raise ValueError(f'Unit conversion for depth from inchs to {units} is not implemented')
 
     def approx_wt(self,units='plf'):
+        '''Approximate joist weight 
+        
+        The approximate joist weight doed not include accessories (e.g., bridging) 
+        
+        Arguments:
+            units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
+        '''       
         if units in ['plf','lbs/ft']:
             if self.round_results:
                 return round(self.approx_wt_plf,self.ndigits_approx_wt_plf)
@@ -78,6 +91,11 @@ class JoistLoadTableEntry:
             raise ValueError(f'Unit conversion for approx_wt from plf to {units} is not implemented')
 
     def span(self,units='ft'):
+        '''Joist span
+        
+        Arguments:
+            units: output units, e.g., 'ft' and 'mm' (default = 'ft')
+        '''  
         if units == 'ft':
             if self.round_results:
                 return round(self.span_ft,self.ndigits_span_ft)
@@ -93,7 +111,12 @@ class JoistLoadTableEntry:
             raise ValueError(f'Unit conversion for span from ft to {units} is not implemented')    
     
     def total_load(self,design_basis,units='plf'):
-    
+        '''Total safe uniformly distributed load-carrying capacity of the joist 
+                
+        Arguments:
+            design_basis: 'ASD' or 'LRFD'
+            units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
+        ''' 
         # Convert ASD value to specified design basis
         if design_basis == "ASD":
             total_load_plf = self.total_load_ASD_plf
@@ -118,7 +141,18 @@ class JoistLoadTableEntry:
             raise ValueError(f'Unit conversion for total_load from plf to {units} is not implemented')        
     
     def deflection_limit_load(self,L_over=360,units='plf'):
+        '''Uniform load which will produce an approximate joist deflection equal to 
+        a specified fraction of the span
 
+        Per the load tables preamble: "In no case shall the prorated load exceed the 
+        total load-carrying capacity of the joist.
+                
+        Arguments:
+            L_over: specified fraction of the span input as a divisor (default = 360, 
+                    meaning load will produce an approximate joist deflection of 1/360
+                    of the span)
+            units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
+        ''' 
         # Convert to specified deflection limit
         deflection_limit_load_plf = (360/L_over)*self.deflection_limit_load_plf
         
@@ -142,8 +176,17 @@ class JoistLoadTableEntry:
         else:
             raise ValueError(f'Unit conversion for deflection_limit_load from plf to {units} is not implemented') 
 
-    def approx_moment_of_inertia(self,shear_deformation_factor=1.15,units='in.4'):
-        
+    def approx_moment_of_inertia(self,shear_deformation_factor=1.15,units='in^4'):
+        '''Approximate moment of inertia of the joist
+
+        Per the SJI load tables preamble: "In no case shall the prorated load exceed the 
+        total load-carrying capacity of the joist."
+                
+        Arguments:
+            shear_deformation_factor: divisor on the approximate gross moment of inerita 
+                                      to account for shear deformations (default = 1.15)
+            units: output units, e.g., 'in^4' and 'mm^4' (default = 'in^4')
+        ''' 
         # Compute approximate moment of inertia
         W = self.deflection_limit_load(L_over=360,units='plf')
         L = self.span(units='ft') - 0.33
@@ -156,19 +199,24 @@ class JoistLoadTableEntry:
                 return round(Ieff_in4,self.ndigits_approx_moment_of_inertia_in4)
             else:
                 return Ieff_in4
-        elif units == 'mm^3':
+        elif units == 'mm^4':
             Ieff_mm = Ieff_in4*in4_to_mm4
             if self.round_results:
                 return round(Ieff_mm,self.ndigits_approx_moment_of_inertia_mm4)
             else:
                 return Ieff_mm
         else:
-            raise ValueError(f'Unit conversion for approx. moment of inertia from in.4 to {units} is not implemented')
+            raise ValueError(f'Unit conversion for approx. moment of inertia from in^4 to {units} is not implemented')
 
 
 def get_joist_data(designation,span=None,span_units='ft'):
-    '''
-    returns dictionary of information on joist
+    '''Looks up joist and returns a JoistLoadTableEntry object
+    
+    Arguments:
+        designation: joist designation
+        span: joist span (default = None)
+              If None, then loads in the JoistLoadTableEntry object
+        span_units: units of input value of span, e.g., 'ft' and 'mm' (default = 'ft')
     '''
     if designation not in joist_database:
         raise ValueError(f'data not available for a {designation} joist')
@@ -240,11 +288,30 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
                    min_depth=None,max_depth=None,series=None,no_erection_bridging=False,
                    design_basis='ASD',L_over=360,
                    span_units='ft',depth_units='in',load_units='plf'):
-    '''
-    Returns a JoistLoadTableEntry object of the lightest joist meeting all the specified criteria.
-    If no joist satifying all the criteria can be found, then None is returned.
-    '''
+    '''Returns a JoistLoadTableEntry object of the lightest joist meeting all the specified criteria.
 
+    If no joist satifying all the criteria can be found, then None is returned.
+    
+    Arguments:
+        span: joist span
+        required_total_load: required total load (default = None)
+        required_deflection_limit_load: required deflection limit load (default = None)
+        min_depth: minimum acceptable joist depth (default = None)
+        max_depth: maximum acceptable joist depth (default = None)
+        series: list of acceptable joist series, e.g. 'K', 'LH', 'DLH' (default = None)
+        no_erection_bridging: if True, only joists with no erection bridging color code 
+                              will be selected (default False)
+        design_basis: 'ASD' or 'LRFD' (default 'ASD')
+        L_over: specified fraction of the span defining the deflection limit, input as a 
+                divisor (default = 360, meaning the delfection limit load will be compared
+                against the load that will produce an approximate joist deflection of 1/360
+                of the span)
+        span_units: units of input value of span, e.g., 'ft' and 'mm' (default = 'ft')
+        depth_units: units of input values of min_depth and max_depth, e.g., 'in' and 'mm' 
+                     (default = 'in')
+        load_units: units of input value of required_total_load and required_deflection_limit_load,
+                    e.g., 'plf' and 'kN/m' (default = 'plf')
+    '''
     # Convert units
     if span_units == 'ft':
         span_ft = span
@@ -254,17 +321,17 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
         raise ValueError(f'Unit conversion for span from {span_units} to ft is not implemented')    
 
     if required_total_load is not None:
-        if load_units in ['plf','lb/ft']:
+        if load_units in ['plf','lbs/ft']:
             required_total_load_plf = required_total_load
-        elif load_units == 'kNm':
+        elif load_units == 'kN/m':
             required_total_load_plf = required_total_load*kNm_to_plf
         else:
             raise ValueError(f'Unit conversion for load from {load_units} to plf is not implemented')    
 
     if required_deflection_limit_load is not None:
-        if load_units in ['plf','lb/ft']:
+        if load_units in ['plf','lbs/ft']:
             required_deflection_limit_load_plf = required_deflection_limit_load
-        elif load_units == 'kNm':
+        elif load_units == 'kN/m':
             required_deflection_limit_load_plf = required_deflection_limit_load*kNm_to_plf
         else:
             raise ValueError(f'Unit conversion for load from {load_units} to plf is not implemented')    
