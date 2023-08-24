@@ -26,7 +26,7 @@ class JoistLoadTableEntry:
     ndigits_depth_in = 0
     ndigits_depth_mm = 0
     ndigits_approx_wt_plf = 1
-    ndigits_approx_wt_kNm = 2
+    ndigits_approx_wt_kNm = 3
     ndigits_span_ft = 0
     ndigits_span_mm = 0
     ndigits_load_plf = 0
