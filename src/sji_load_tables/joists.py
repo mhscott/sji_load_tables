@@ -395,3 +395,111 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
         return joist
     
     return None
+
+
+def economical_joist_table(span,load_type='Total Load',
+                           min_depth=None,max_depth=None,series=None,no_erection_bridging=False,
+                           design_basis='ASD',L_over=360,print_table=True,
+                           span_units='ft',depth_units='in',load_units='plf'):
+    '''Returns a list of JoistLoadTableEntry objects representing economical (cost based only
+    on approximate weight) joists for the given span and specified criteria.
+   
+    Arguments:
+        span: joist span
+        load_type: criteria for selection of joists 'Total Load' or 'Deflection Limit Load' 
+                   (default = 'Total Load')
+        min_depth: minimum acceptable joist depth (default = None)
+        max_depth: maximum acceptable joist depth (default = None)
+        series: list of acceptable joist series, e.g. 'K', 'LH', 'DLH' (default = None)
+        no_erection_bridging: if True, only joists with no erection bridging color code 
+                              will be selected (default = False)
+        design_basis: 'ASD' or 'LRFD' (default = 'ASD')
+        L_over: specified fraction of the span defining the deflection limit, input as a 
+                divisor (default = 360, meaning the delfection limit load will be computed as
+                the load that will produce an approximate joist deflection of 1/360
+                of the span)
+        print_table: option to print table of results to screen (default = False)
+        span_units: units of input value of span, e.g., 'ft' and 'mm' (default = 'ft')
+        depth_units: units of input values of min_depth and max_depth, e.g., 'in' and 'mm' 
+                     (default = 'in')
+        load_units: units of load output, e.g., 'plf' and 'kN/m' (default = 'plf')
+    '''
+    # Convert units
+    if span_units == 'ft':
+        span_ft = span
+    elif span_units == 'mm':
+        span_ft = span*mm_to_ft
+    else:
+        raise ValueError(f'Unit conversion for span from {span_units} to ft is not implemented')  
+
+    if min_depth is not None:
+        if depth_units == 'in':
+            min_depth_in = min_depth
+        elif span_units == 'mm':
+            min_depth_in = min_depth*mm_to_in
+        else:
+            raise ValueError(f'Unit conversion for min_depth from {depth_units} to in. is not implemented')   
+    
+    if max_depth is not None:
+        if depth_units == 'in':
+            max_depth_in = max_depth
+        elif span_units == 'mm':
+            max_depth_in = max_depth*mm_to_in
+        else:
+            raise ValueError(f'Unit conversion for max_depth from {depth_units} to in. is not implemented')  
+
+    # Loop through joists
+    economical_joists = []
+    previous_load = 0
+    for designation in joists_sorted_by_weight:
+        joist_dict = joist_database[designation]
+        
+        if series is not None:
+            if joist_dict['series'] not in series:
+                continue
+        
+        if min_depth is not None:
+            if joist_dict['depth_in'] < min_depth_in:
+                continue
+        
+        if max_depth is not None:
+            if joist_dict['depth_in'] > max_depth_in:
+                continue
+        
+        if span_ft < joist_dict['span_ft_list'][0]:
+            # Span too short for joist
+            continue
+            
+        if span_ft > joist_dict['span_ft_list'][-1]:
+            # Span too long for joist
+            continue
+        
+        # Get joist data object
+        joist = get_joist_data(designation, span)
+
+        # Check erection bridging
+        if no_erection_bridging:
+            if joist.erection_bridging_color_code is not None:
+                continue
+
+        # Check if economical
+        if load_type.lower() == 'total load':
+            load = joist.total_load(design_basis)
+        elif load_type.lower() == 'deflection limit load':
+            load = joist.deflection_limit_load(L_over)
+        else:
+            raise ValueError(f'Invalid load_type ({load_type})')
+        if load > previous_load:
+            economical_joists.append(joist)
+            previous_load = load
+
+    if print_table:
+        print(f'Designation   Total Load    Defl. Limit Load    Weight')
+        print(f'                ({load_units})           ({load_units})           ({load_units})')
+        for joist in economical_joists:
+            total_load = joist.total_load(design_basis,units=load_units)
+            defl_limit_load = joist.deflection_limit_load(L_over,units=load_units)
+            weight = joist.approx_wt(units=load_units)
+            print(f'{joist.designation:^11s}   {total_load:^10g}      {defl_limit_load:^10g}       {weight:^9g}')
+       
+    return economical_joists
