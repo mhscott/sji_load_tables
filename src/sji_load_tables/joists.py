@@ -300,8 +300,8 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
         max_depth: maximum acceptable joist depth (default = None)
         series: list of acceptable joist series, e.g. 'K', 'LH', 'DLH' (default = None)
         no_erection_bridging: if True, only joists with no erection bridging color code 
-                              will be selected (default False)
-        design_basis: 'ASD' or 'LRFD' (default 'ASD')
+                              will be selected (default = False)
+        design_basis: 'ASD' or 'LRFD' (default = 'ASD')
         L_over: specified fraction of the span defining the deflection limit, input as a 
                 divisor (default = 360, meaning the delfection limit load will be compared
                 against the load that will produce an approximate joist deflection of 1/360
