@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from typing import Union
+
 from .interp import interp
 from .data import joist_database, joists_sorted_by_weight
 
@@ -16,10 +18,10 @@ class JoistLoadTableEntry:
     series: str
     depth_in: float
     approx_wt_plf: float
-    span_ft: float
-    total_load_ASD_plf: float
-    deflection_limit_load_plf: float
-    erection_bridging_color_code: str
+    span_ft: Union[float, None]
+    total_load_ASD_plf: Union[float, None]
+    deflection_limit_load_plf: Union[float, None]
+    erection_bridging_color_code: Union[str, None]
     
     # Properties for rounding results
     round_results = True
