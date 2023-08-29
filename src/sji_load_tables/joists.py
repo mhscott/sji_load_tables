@@ -121,6 +121,9 @@ class JoistLoadTableEntry:
             design_basis: 'ASD' or 'LRFD'
             units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
         ''' 
+        if self.total_load_ASD_plf is None:
+            raise ValueError('total_load cannot return a value because total_load_ASD_plf is None')
+        
         # Convert ASD value to specified design basis
         if design_basis == "ASD":
             total_load_plf = self.total_load_ASD_plf
@@ -157,6 +160,9 @@ class JoistLoadTableEntry:
                     of the span)
             units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
         ''' 
+        if self.total_load_ASD_plf is None:
+            raise ValueError('deflection_limit_load cannot return a value because deflection_limit_load_plf is None')
+        
         # Convert to specified deflection limit
         deflection_limit_load_plf = (360/L_over)*self.deflection_limit_load_plf
         
@@ -230,6 +236,9 @@ def get_joist_data(designation,span=None,span_units='ft'):
     if span is None:
         total_load_ASD = None
         deflection_limit_load = None
+        span_ft = None
+        total_load_ASD_plf = None
+        deflection_limit_load_plf = None
         erection_bridging_color_code = None
     
     else:
