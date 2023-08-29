@@ -55,7 +55,7 @@ class JoistLoadTableEntry:
     def depth(self,units='in'):
         '''Joist depth
         
-        Arguments:
+        Parameters:
             units: output units, e.g., 'in' and 'mm' (default = 'in')
         '''    
         if units == 'in':
@@ -77,7 +77,7 @@ class JoistLoadTableEntry:
         
         The approximate joist weight doed not include accessories (e.g., bridging) 
         
-        Arguments:
+        Parameters:
             units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
         '''       
         if units in ['plf','lbs/ft']:
@@ -97,7 +97,7 @@ class JoistLoadTableEntry:
     def span(self,units='ft'):
         '''Joist span
         
-        Arguments:
+        Parameters:
             units: output units, e.g., 'ft' and 'mm' (default = 'ft')
         '''  
         if units == 'ft':
@@ -117,7 +117,7 @@ class JoistLoadTableEntry:
     def total_load(self,design_basis,units='plf'):
         '''Total safe uniformly distributed load-carrying capacity of the joist 
                 
-        Arguments:
+        Parameters:
             design_basis: 'ASD' or 'LRFD'
             units: output units, e.g., 'plf' and 'kN/m' (default = 'plf')
         ''' 
@@ -154,7 +154,7 @@ class JoistLoadTableEntry:
         Per the load tables preamble: "In no case shall the prorated load exceed the 
         total load-carrying capacity of the joist.
                 
-        Arguments:
+        Parameters:
             L_over: specified fraction of the span input as a divisor (default = 360, 
                     meaning load will produce an approximate joist deflection of 1/360
                     of the span)
@@ -192,7 +192,7 @@ class JoistLoadTableEntry:
         Per the SJI load tables preamble: "In no case shall the prorated load exceed the 
         total load-carrying capacity of the joist."
                 
-        Arguments:
+        Parameters:
             shear_deformation_factor: divisor on the approximate gross moment of inerita 
                                       to account for shear deformations (default = 1.15)
             units: output units, e.g., 'in^4' and 'mm^4' (default = 'in^4')
@@ -222,7 +222,7 @@ class JoistLoadTableEntry:
 def get_joist_data(designation,span=None,span_units='ft'):
     '''Looks up joist and returns a JoistLoadTableEntry object
     
-    Arguments:
+    Parameters:
         designation: joist designation
         span: joist span (default = None)
               If None, then loads in the JoistLoadTableEntry object
@@ -305,7 +305,7 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
 
     If no joist satifying all the criteria can be found, then None is returned.
     
-    Arguments:
+    Parameters:
         span: joist span
         required_total_load: required total load (default = None)
         required_deflection_limit_load: required deflection limit load (default = None)
@@ -417,7 +417,7 @@ def economical_joist_table(span,load_type='Total Load',
     '''Returns a list of JoistLoadTableEntry objects representing economical (cost based only
     on approximate weight) joists for the given span and specified criteria.
    
-    Arguments:
+    Parameters:
         span: joist span
         load_type: criteria for selection of joists 'Total Load' or 'Deflection Limit Load' 
                    (default = 'Total Load')

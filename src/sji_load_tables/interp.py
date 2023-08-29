@@ -3,7 +3,7 @@ import bisect
 def interp(x,xp,fp,left=None,right=None):
     '''Linear interpolation from a list
     
-    Arguments:
+    Parameters:
         x: The input value
         xp: The input list
         fp: The output list
