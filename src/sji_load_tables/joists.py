@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from sji_load_tables import interp
-from sji_load_tables.data import joist_database, joists_sorted_by_weight
+from .interp import interp
+from .data import joist_database, joists_sorted_by_weight
 
 # Unit Conversions
 in_to_mm = 25.4
