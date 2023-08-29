@@ -38,9 +38,11 @@ class JoistLoadTableEntry:
     
     def __str__(self):
         if self.span_ft is not None:
-            s =   f'{self.designation} joist, span_ft={self.span_ft}, approx_wt_plf={self.approx_wt_plf} \n' 
-            s +=  f'  total_load_ASD_plf={self.total_load_ASD_plf}, deflection_limit_load_plf={self.deflection_limit_load_plf} \n'
-            s +=  f'  erection_bridging_color_code={self.erection_bridging_color_code}'
+            s = (
+                f'{self.designation} joist, span_ft={self.span_ft}, approx_wt_plf={self.approx_wt_plf} \n' 
+                f'  total_load_ASD_plf={self.total_load_ASD_plf}, deflection_limit_load_plf={self.deflection_limit_load_plf} \n'
+                f'  erection_bridging_color_code={self.erection_bridging_color_code}'
+            )
         else:
             s = f'{self.designation} joist, approx_wt_plf={self.approx_wt_plf}'
         return s
