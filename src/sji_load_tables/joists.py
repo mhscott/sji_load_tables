@@ -352,7 +352,7 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
     if min_depth is not None:
         if depth_units == 'in':
             min_depth_in = min_depth
-        elif span_units == 'mm':
+        elif depth_units == 'mm':
             min_depth_in = min_depth*mm_to_in
         else:
             raise ValueError(f'Unit conversion for min_depth from {depth_units} to in. is not implemented')   
@@ -360,7 +360,7 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
     if max_depth is not None:
         if depth_units == 'in':
             max_depth_in = max_depth
-        elif span_units == 'mm':
+        elif depth_units == 'mm':
             max_depth_in = max_depth*mm_to_in
         else:
             raise ValueError(f'Unit conversion for max_depth from {depth_units} to in. is not implemented')   
@@ -448,7 +448,7 @@ def economical_joist_table(span,load_type='Total Load',
     if min_depth is not None:
         if depth_units == 'in':
             min_depth_in = min_depth
-        elif span_units == 'mm':
+        elif depth_units == 'mm':
             min_depth_in = min_depth*mm_to_in
         else:
             raise ValueError(f'Unit conversion for min_depth from {depth_units} to in. is not implemented')   
@@ -456,7 +456,7 @@ def economical_joist_table(span,load_type='Total Load',
     if max_depth is not None:
         if depth_units == 'in':
             max_depth_in = max_depth
-        elif span_units == 'mm':
+        elif depth_units == 'mm':
             max_depth_in = max_depth*mm_to_in
         else:
             raise ValueError(f'Unit conversion for max_depth from {depth_units} to in. is not implemented')  
