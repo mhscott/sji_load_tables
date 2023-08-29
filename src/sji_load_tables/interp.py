@@ -5,7 +5,7 @@ def interp(x,xp,fp,left=None,right=None):
     
     Parameters:
         x: The input value
-        xp: The input list
+        xp: The input list. Assumed to be sorted.
         fp: The output list
         left: The value to return if x is less than the first value in xp (default None)
         right: The value to return if x is greaterh than the last value in xp (default None)

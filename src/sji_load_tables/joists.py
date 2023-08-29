@@ -193,7 +193,7 @@ class JoistLoadTableEntry:
         total load-carrying capacity of the joist."
                 
         Parameters:
-            shear_deformation_factor: divisor on the approximate gross moment of inerita 
+            shear_deformation_factor: divisor on the approximate gross moment of inertia 
                                       to account for shear deformations (default = 1.15)
             units: output units, e.g., 'in^4' and 'mm^4' (default = 'in^4')
         ''' 
