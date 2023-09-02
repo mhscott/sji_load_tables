@@ -21,6 +21,33 @@ or [create an issue](https://github.com/denavit/sji_load_tables/issues/new/choos
 pip install sji_load_tables
 ```
 
+## Example Usage
+
+### Data Lookup
+```
+>>> import sji_load_tables as sji
+>>> joist = sji.get_joist_data('26K8',44) # 26K8 joist with a span of 44 ft
+>>> print(joist.total_load('ASD')) # default output units are lbs/ft
+251.0
+>>> print(joist.total_load('LRFD'))
+376.0
+>>> print(joist.total_load('LRFD',units='kN/m'))
+5.49
+>>> print(joist.deflection_limit_load())
+143.0
+```
+
+### Find Lightest Joist
+```
+>>> import sji_load_tables as sji
+>>> # Find the lightest K series joist with a span of 45 ft and total load of 250 lbs/ft ASD
+>>> joist = sji.lightest_joist(45,250,design_basis='ASD',series='K')
+>>> print(joist)
+30K7 joist, span_ft=45, approx_wt_plf=9.6
+  total_load_ASD_plf=251.0, deflection_limit_load_plf=164.0
+  erection_bridging_color_code=Red
+```
+ 
 [License]: LICENSE
 
 
