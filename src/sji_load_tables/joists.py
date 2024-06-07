@@ -412,7 +412,7 @@ def lightest_joist(span,required_total_load=None,required_deflection_limit_load=
 
 def economical_joist_table(span,load_type='Total Load',
                            min_depth=None,max_depth=None,series=None,no_erection_bridging=False,
-                           design_basis='ASD',L_over=360,print_table=True,
+                           design_basis='ASD',L_over=360,print_table=False,
                            span_units='ft',depth_units='in',load_units='plf'):
     '''Returns a list of JoistLoadTableEntry objects representing economical (cost based only
     on approximate weight) joists for the given span and specified criteria.
